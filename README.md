@@ -184,9 +184,9 @@ $ ls
 ubuntu_latest.sif
 ```
 
-This downloads an `.sif` file, which is an "image" from the sylabs.io online repository. 
+This downloads an `.sif` file, which is an "image" from the sylabs.io online repository.
 A "container" is an "image" thas is running.
-As it stands, this image is packaged up and read-only. 
+As it stands, this image is packaged up and read-only.
 It's main purpose is as a base image which we will talk about in a sec.
 
 We can create a duplicate image from it, with some additional flags to let singularity know we want to play around.
