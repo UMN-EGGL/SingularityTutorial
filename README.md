@@ -179,7 +179,7 @@ Hey, look at that! They talk about "root file systems" in the description ;)
 Let's download a container image and prove that its just a filesystem with some other bells and whistles.
 
 ```
-$ singularity pull ubuntu:19.04
+$ singularity pull library://library/default/ubuntu 
 $ ls
 ubuntu_latest.sif
 ```
