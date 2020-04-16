@@ -74,6 +74,7 @@ Out[2]:
 
 And just to drive this point home, many python packages provide convenient ways to access underlying libraries written in C or C++.
 For instance, if you are using `numpy`, there are links to low-level (and fast!) numerical computing libraries that aren't written or affiliated with Python.
+
 So, if reproducibility is so important, why not create your work environment in a viurtual machine and distribute that?
 VMs are close to solving this problem, they check off a lot of the boxes for what we need.
 However, VM images tend to be very big, and while they are running they inefficient (everything needs to go through a virtualization layer), so they are slow.
