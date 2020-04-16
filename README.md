@@ -1,64 +1,64 @@
 # Singularity Tutorial
 This repository contains a brief tutorial on what singularity is and why you
-would want to use it. To get started `clone` this repository. We will be 
+would want to use it. To get started `clone` this repository. We will be
 building and running a singularity image together.
 
 ## Setting the stage: what happens when you run a "little" script
-Lets say you log into MSI to run a python script. 
-In order to stay organized and to be re-producible, you have everything you need for you analysis in one script. 
+Lets say you log into MSI to run a python script.
+In order to stay organized and to be re-producible, you have everything you need for you analysis in one script.
 For convenience, you wrote the script on your laptop and now want to run it on a big data set.
 
 ```
 $ python myscript.py
 ```
 
-When you run this program **a lot** of things are happening. 
-Python is a program that accepts valid python code. 
-It's an interpreted language, which means there is a binary (or executable) that takes your script and turns it into machine executable code on the fly. 
-Pretty cool, except that means that for each working python script, you need a matching, compatible python executable. 
-Maybe you took note of the version of Python you had running on your laptop. 
-But even that can change! 
-Typically, there are "default" versions of python that are distributed by the [Python foundation](https://www.python.org/downloads/). 
+When you run this program **a lot** of things are happening.
+Python is a program that accepts valid python code.
+It's an interpreted language, which means there is a binary (or executable) that takes your script and turns it into machine executable code on the fly.
+Pretty cool, except that means that for each working python script, you need a matching, compatible python executable.
+Maybe you took note of the version of Python you had running on your laptop.
+But even that can change!
+Typically, there are "default" versions of python that are distributed by the [Python foundation](https://www.python.org/downloads/).
 And most systems have *multiple* versions of python on them!
-My machine running Ubuntu comes with at least two system installed versions of Python. 
+My machine running Ubuntu comes with at least two system installed versions of Python.
 
 ```
-$ /bin/python --version                                               
+$ /bin/python --version
 Python 2.7.16
 
-$ /bin/python3 --version                                               
+$ /bin/python3 --version
 Python 3.7.3
 ```
 
-But did you know there are also versions that are distributed by third parties? 
+But did you know there are also versions that are distributed by third parties?
 Maybe you are using them and don't even know it!
 If you are using conda virtual environments, you are using a python binary that is distributed by [Continuum Analytics](https://www.anaconda.com/distribution/).
 
 ```
-$ which python                                                        
+$ which python
 /home/rob/.conda/bin/python
 
-$ /home/rob/.conda/bin/python --version                                
+$ /home/rob/.conda/bin/python --version
 Python 3.7.4
 ```
 
-Who are they? 
-Why do they have their own versions of python? 
-What are the differences? 
+Who are they?
+Why do they have their own versions of python?
+What are the differences?
 
 This doesn't stop at different versions of Python. If your script uses any libraries, those too are probably going to slightly differ between systems.
 When you import a library in python, the interpreter looks in a couple of different places for those packages.
 
 ```
 $ ipython
-Python 3.7.3 | packaged by conda-forge | (default, Dec  6 2019, 08:54:18) 
+Python 3.7.3 | packaged by conda-forge | (default, Dec  6 2019, 08:54:18)
 Type 'copyright', 'credits' or 'license' for more information
 IPython 7.7.0 -- An enhanced Interactive Python. Type '?' for help.
 
-In [1]: import sys                                                                                    
+In [1]: import sys
 
-In [2]: sys.path                                                                                      
-Out[2]: 
+In [2]: sys.path
+Out[2]:
 ['/home/rob/.conda/bin',
  '/home/rob/.conda/lib/python37.zip',
  '/home/rob/.conda/lib/python3.7',
@@ -94,13 +94,13 @@ It's the `ls` program, and the terminal resolves it to `/bin/ls`.
 If you read the manual page for `ls`, you see something strange.
 
 ```
-/bin/ls --help                                                                                                                                                                                          
-Usage: /bin/ls [OPTION]... [FILE]...                                                                                                                                                                              
-List information about the FILEs (the current directory by default).                                                                                                                                              
-Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.                                                                                                                                         
-                                                                                                                                                                                                                  
-Mandatory arguments to long options are mandatory for short options too.                                                                                                                                          
-  -a, --all                  do not ignore entries starting with . 
+/bin/ls --help
+Usage: /bin/ls [OPTION]... [FILE]...
+List information about the FILEs (the current directory by default).
+Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.
+
+Mandatory arguments to long options are mandatory for short options too.
+  -a, --all                  do not ignore entries starting with .
 
 [... truncated ...]
 ```
@@ -116,10 +116,10 @@ So, the following two commands are equivalent:
 ```
 $ ls
  Codes                    Cytoscape_v3.7.1   Documents   Music      Project   Videos            vmware
- CytoscapeConfiguration   Desktop            Downloads   Pictures   R         snap            
+ CytoscapeConfiguration   Desktop            Downloads   Pictures   R         snap
 $ ls $PWD
  Codes                    Cytoscape_v3.7.1   Documents   Music      Project   Videos            vmware
- CytoscapeConfiguration   Desktop            Downloads   Pictures   R         snap            
+ CytoscapeConfiguration   Desktop            Downloads   Pictures   R         snap
 ```
 
 Furthermore, when you run the `cd` command, you are not doing anything special.
@@ -132,16 +132,16 @@ This all works because the filesystem in Linux is arranged as a tree, with the r
 So when a program gets installed in your home directory, it can make big assumptions about the layout of other things on the system.
 Like, it can expect that `/tmp` would be a good place to put temporary files (stuff in `/tmp` conventionally gets routinely wiped).
 
-Likewise, the terminal can expect that things in `/bin` are executable programs. 
+Likewise, the terminal can expect that things in `/bin` are executable programs.
 If you say, "run MyCoolProgram", the terminal can assume that if it finds a file called `/bin/MyCoolProgam` (in your `$PATH`), that is what you wanted.
 
 Whoah woah woah, hold up. I know what you are thinking, "I thought this was a tutorial on containers?".
-Bear with me. 
-What if you could just tell the terminal, 
-    "hey, I know you are assuming that everything that I am doing is relative to `/`. 
+Bear with me.
+What if you could just tell the terminal,
+    "hey, I know you are assuming that everything that I am doing is relative to `/`.
      But I want you to change `/` to be `/home/rob/nestedFilesystem/`."
 And, what if inside of `/home/rob/nestedFilesystem/` there were directories for `/bin` and `/home` and `/tmp`?
 What if you had a complete and trimmed down filesystem in there that was totally catered to a specific task?
-By telling the terminal to change its `/` to `/home/rob/nestedFilesystem/` you have the benefit of the terminal being managed by 
+By telling the terminal to change its `/` to `/home/rob/nestedFilesystem/` you have the benefit of the terminal being managed by
     the host OS (no virtualization) as well as a sort of nested compartmentalized system where everthing inside that nested directory is relative to its new root directory.
 
