@@ -145,3 +145,61 @@ What if you had a complete and trimmed down filesystem in there that was totally
 By telling the terminal to change its `/` to `/home/rob/nestedFilesystem/` you have the benefit of the terminal being managed by
     the host OS (no virtualization) as well as a sort of nested compartmentalized system where everthing inside that nested directory is relative to its new root directory.
 
+There is a actually a linux command, `chroot`, that accomplishes this.
+For our purposes, this is a pretty good container.
+We can put everything we need for a specific analysis in a directory and just tell the terminal to ignore everything else.
+Well, it turns out, that while the filesystem is an important piece of implementing a container, it doesn't get you 100% of the way there.
+[Here](https://ericchiang.github.io/post/containers-from-scratch/) is a good post of the other things that need to be changed in order to have fully isolated containers.
+And, as we all know, if you need to do more than a couple of things in computing, you just write a program to do all the boring stuff for you!
+
+## Singularity
+Hopefully, you have singularity installed on your system:
+
+```
+$ singularity --help
+
+Linux container platform optimized for High Performance Computing (HPC) and
+Enterprise Performance Computing (EPC)
+
+Usage:
+  singularity [global options...]
+
+Description:
+  Singularity containers provide an application virtualization layer enabling
+  mobility of compute via both application and environment portability. With
+  Singularity one is capable of building a root file system that runs on any
+  other Linux system where Singularity is installed.
+
+[... truncated ...]
+```
+
+Hey, look at that! They talk about "root file systems" in the description ;)
+
+Let's download a container image and prove that its just a filesystem with some other bells and whistles.
+
+```
+$ singularity pull ubuntu:19.04
+$ ls
+ubuntu_latest.sif
+```
+
+This downloads an `.sif` file, which is an "image" from the sylabs.io online repository. 
+A "container" is an "image" thas is running.
+As it stands, this image is packaged up and read-only. 
+It's main purpose is as a base image which we will talk about in a sec.
+
+We can create a duplicate image from it, with some additional flags to let singularity know we want to play around.
+
+```
+$ singularity build --sandbox lets_play ubuntu_latest.sif
+$ ls
+INFO:    Starting build...
+INFO:    Creating sandbox directory...
+INFO:    Build complete: lets_play
+$ ls                                                                                                                                                                                                        !10058
+lets_play  ubuntu_latest.sif
+```
+While the `.sif` file is a nice packaged "image", we built a new image called `lets_play`.
+We also enabled `--sandbox` mode which tells singularity not to package everything up.
+We end up with a new "image" called `lets_play`, which is ... you guessed it!
+A root directory!
