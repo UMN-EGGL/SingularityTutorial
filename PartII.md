@@ -123,7 +123,7 @@ Lets re-build our container to contain a new program!
 
 ```                                                                             
 # In: singularity.def   
-Bootstrap: docker
+Bootstrap: library
 From: ubuntu:19.10
 
 %post
@@ -132,7 +132,6 @@ From: ubuntu:19.10
     # update and install essentials
     apt-get update && apt-get upgrade --yes
     apt-get install curl wget \
-    openjdk-8-jre \
     gcc zlib1g-dev libbz2-dev liblzma-dev \
     build-essential \
     unzip --yes
