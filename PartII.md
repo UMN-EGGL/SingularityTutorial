@@ -122,22 +122,26 @@ We have access to all the programs that were built when we build the image.
 Lets re-build our container to contain a new program!
 
 ```                                                                             
-# In: singularity.def                                                           
-Bootstrap: library                                                                                      
-From: ubuntu:19.10                                                                                      
+# In: singularity.def   
+Bootstrap: docker
+From: ubuntu:19.10
 
 %post
-    apt-get update && apt-get upgrade --yes    
-    apt-get install curl wget \                                                                                                          
-    gcc zlib1g-dev libbz2-dev liblzma-dev \                                     
-    build-essential \                                                           
-    unzip --yes                                                                 
-                                                                                
-    # install bcftools (system wide)                                            
-    wget https://github.com/samtools/bcftools/releases/download/1.9/bcftools-1.9.tar.bz2
-    tar xvvf bcftools-1.9.tar.bz2                                               
-    cd bcftools-1.9                                                             
-    ./configure                                                                 
-    make                                                                        
-    make install                                                                                
+    # Set
+    export OPTDIR="/opt/EGGLImpute"
+    # update and install essentials
+    apt-get update && apt-get upgrade --yes
+    apt-get install curl wget \
+    openjdk-8-jre \
+    gcc zlib1g-dev libbz2-dev liblzma-dev \
+    build-essential \
+    unzip --yes
+
+    # install bcftools (system wide)
+    wget https://github.com/samtools/bcftools/releases/download/1.9/bcftools-1.9.tar.bz2 
+    tar xvvf bcftools-1.9.tar.bz2 
+    cd bcftools-1.9 
+    ./configure 
+    make 
+    make install                                                                             
 ``` 
