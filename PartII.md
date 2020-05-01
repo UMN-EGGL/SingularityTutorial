@@ -1,10 +1,10 @@
-# Singularity Tutorial -- Part II -- Part I
+# Singularity Tutorial -- Part II 
 In Part I, we peeled back what containers were "under the hood", and build a container using the `--sandbox` option to prove that it was just a filesystem.
 In this part, we will be building our own container using [singularity definition files](https://sylabs.io/guides/3.0/user-guide/definition_files.html).
 
 Overall, there are 2 major steps in getting a container running. The first is building, the second in running.
 If you are planning on running containers on your HPC (MSI), you will need to *build* them somewhere else, since building requires admin/root access.
-To get going, start with a fresh text file called `Singularity.def` and open your browser to `https://cloud.sylabs.io/home`.
+To get going, start with a fresh text file called `singularity.def` and open your browser to `https://cloud.sylabs.io/home`.
 
 ```
 $ touch singularity.def
