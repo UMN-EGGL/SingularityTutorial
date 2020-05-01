@@ -128,8 +128,7 @@ From: ubuntu:19.10
 
 %post
     apt-get update && apt-get upgrade --yes    
-    apt-get install curl wget \                                                 
-    openjdk-8-jre \                                                             
+    apt-get install curl wget \                                                                                                          
     gcc zlib1g-dev libbz2-dev liblzma-dev \                                     
     build-essential \                                                           
     unzip --yes                                                                 
