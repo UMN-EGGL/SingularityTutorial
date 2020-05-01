@@ -62,5 +62,83 @@ From: library/default/ubuntu:20.04
 
 ```
 
+This is all we need to build a container. 
+Let's use the same command from part 1 to build a container using `--sandbox` so we can have a look around.
 
+```
+$ sudo singularity build --sandbox base_image singularity.def
+[sudo] password for rob: 
+INFO:    Starting build...
+INFO:    Creating sandbox directory...
+INFO:    Build complete: base_image
+```
+We need `sudo` here because in order to modify the filesystem inside the image, we need to be an admin.
+The output of this is a directory that contains our container image filesystem.
+Let's take a peek inside:
 
+```
+$ ls base_image 
+bin   dev          etc   lib    lib64   media  opt   root  sbin         srv  tmp  var
+boot  environment  home  lib32  libx32  mnt    proc  run   singularity  sys  usr
+```
+
+To run this container interactively, use the `singularity shell` command.
+
+```
+$ singularity shell base_image 
+Singularity> ls /
+bin   dev          etc   lib    lib64   media  opt   root  sbin         srv  tmp  var
+boot  environment  home  lib32  libx32  mnt    proc  run   singularity  sys  usr
+```
+The prompt `Singularity>` lets you know you are in a container.
+We can list the root directory `/` and see it is the same as we saw before. 
+Let's explore
+
+```
+Singularity> whoami
+rob
+Singularity> pwd
+/home/rob/Codes/SingularityTutorial
+Singularity> ls
+PartI.md  PartII.md  base_image  singularity.def
+Singularity> ls ~
+ vmware                   Desktop      Music      Videos                 
+ Codes                    Documents    Pictures  'VirtualBox VMs'   
+ CytoscapeConfiguration   Downloads    Project    snap
+ Cytoscape_v3.7.1         Lightworks   R          igv               
+```
+
+While you are in the container, you are ... you. 
+This might not be surprising, but it is different than how other container systems work.
+Another thing to notice is that we have access to the directory where we started the container from.
+We also access to our home directory (yours will look different than mine, which is the point!). 
+
+So this sort of goes against the pure philosophy of what containers do and how they should work.
+However, this is extremely pragmatic.
+It allows you to access data outside your container, and in the most likely places.
+
+We also get the benefit of being in a container. 
+We have access to all the programs that were built when we build the image.
+Lets re-build our container to contain a new program!
+
+```                                                                             
+# In: singularity.def                                                           
+Bootstrap: library                                                                                      
+From: ubuntu:19.10                                                                                      
+
+%post
+    apt-get update && apt-get upgrade --yes    
+    apt-get install curl wget \                                                 
+    openjdk-8-jre \                                                             
+    gcc zlib1g-dev libbz2-dev liblzma-dev \                                     
+    build-essential \                                                           
+    unzip --yes                                                                 
+                                                                                
+    # install bcftools (system wide)                                            
+    wget https://github.com/samtools/bcftools/releases/download/1.9/bcftools-1.9.tar.bz2
+    tar xvvf bcftools-1.9.tar.bz2                                               
+    cd bcftools-1.9                                                             
+    ./configure                                                                 
+    make                                                                        
+    make install                                                                                
+``` 
