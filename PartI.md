@@ -1,7 +1,6 @@
-# Singularity Tutorial
-This repository contains a brief tutorial on what singularity is and why you
-would want to use it. To get started `clone` this repository. We will be
-building and running a singularity image together.
+# Singularity Tutorial -- Part I
+This repository contains a brief tutorial on what singularity is and why you would want to use it. 
+To get started `clone` this repository. We will be building and running a singularity image together.
 
 ## Setting the stage: what happens when you run a "little" script
 Lets say you log into MSI to run a python script.
