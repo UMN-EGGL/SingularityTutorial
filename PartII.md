@@ -127,8 +127,6 @@ Bootstrap: library
 From: ubuntu:19.10
 
 %post
-    # Set
-    export OPTDIR="/opt/EGGLImpute"
     # update and install essentials
     apt-get update && apt-get upgrade --yes
     apt-get install curl wget \
